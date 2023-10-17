@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
+
+    <script src="vega_lite_vis.js"></script>
+
+    <title>vega-lite graph </title>
+</head>
+
+<body style="background-color:orange;">
+    <div class="container" ,style="text-align:center">
+        <div class="row">
+            <div class="container">
+                <h1 style="text-align:center" ;>WORLD POPULATION </h1>
+
+            </div>
+        </div>
+        <h3 style="text-align: center;">The world has a massive amount of countries.</h3>
+        <h3 style="text-align: center;">However,each countries on earth has different amount of people along with different area.</h3>
+        <h3 style="text-align: center;">That makes this world a fantastic place due to its diversity types of people</h3>
+        <h3 style="text-align: center;">Countries with large amount of Area do not mean they have large amount of people</h3>
+        <h3 style="text-align: center;">Let's find out more about that through the graphs below</h3>
+        <h2>1.World Population Represent map</h2>
+        <div class="card" style="background-color:#1E90FF" ;">
+            <div class="card-body">
+                <div class="container" style="margin-left:200px">
+                    <div id="vis" style="margin-top:30px"></div>
+
+                    <script type="text/javascript" ,style="text-align:center">
+                        var yourVlSpec = {
+                            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                            "title": "World Population (Recorded in 2022)",
+                            "width": 1000,
+                            "height": 400,
+                            "projection": { "type": "equalEarth" },
+                            "data": {
+                                "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/3_choropleth_map/js/ne_110m_admin_0_countries.topojson",
+                                "format": { "type": "topojson", "feature": "ne_110m_admin_0_countries" }
+                            },
+                            "transform": [
+                                {
+                                    "lookup": "properties.NAME",
+                                    "from": {
+                                        "data": {
+                                            "url": "https://raw.githubusercontent.com/nhaok3/fit3179assignment2/main/countries.csv"
+                                        },
+                                        "key": "country",
+                                        "fields": ["population"]
+                                    }
+                                }
+
+                            ],
+                            "mark": { "type": "geoshape" },
+                            "encoding": {
+                                "color": {
+                                    "field": "population",
+                                    "type": "quantitative",
+                                    "scale": { "type": "log" }
+                                },
+                                "tooltip": [
+                                    { "field": "properties.NAME", "type": "nominal", "title": "Country" },
+                                    { "field": "population", "type": "quantitative" }
+                                ]
+                            }
+                        };
+                        vegaEmbed('#vis', yourVlSpec);
+                    </script>
+                    <h2 style="margin-left :200px;">The map Show the population of the World that was recorded in 2022
+                    </h2>
+                    <h3 style="margin-left :10px;">-As we can see, China has the largest amount of Population All over
+                        the world with 1367110000 people in 2022</h3>
+                    <h3 style="margin-left :10px;"> -Following by India with 1263930000 people </h3>
+                    <h3 style="margin-left :10px;"> -This is already known by people around the world since china is well-known as 1billion-country </h3>
+                    <h3 style="margin-left :10px;"> -South Georgia Came The last with only 30 people </h3>
+                </div>
+            </div>
+        </div>
+        <h2>2.World Density Recorder in 2022</h2>
+        <div class="card" style="background-color:	#FF0066" ;">
+            <div class="card-body">
+                <div class="container" style="margin-left:120px">
+                    <div id="vis2" style="margin-top:30px"></div>
+
+                    <script type="text/javascript" ,style="text-align:center">
+                        var yourVlSpec = {
+                            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                            "data": {
+                                "url": "https://raw.githubusercontent.com/nhaok3/fit3179assignment2/main/countries.csv"
+                            },
+                            "title": "World Population Density (Population /Area)",
+                            "width": 1200,
+                            "height": 400,
+                            "transform": [
+                                {
+                                    "calculate": "datum.population/datum.area/1000000",
+                                    "as": "Density"
+                                },
+                                {
+                                    "filter": "datum.Density > Density_Above"
+                                },
+                               
+                                
+                            ],
+                            "mark": "bar",
+                            "params": [
+                                {
+                                    "name": "Density_Above",
+                                    "value": 0,
+                                    "bind": {
+                                        "input": "range",
+                                        "min": 0,
+                                        "max": 0.022,
+                                        "step":0.0001,
+                                        "name": "World Density: ",
+                                        
+                                    },
+                                   
+                                },
+                               
+                            ],
+                            "encoding": {
+                                "x": {
+                                    "field": "country",
+                                    "type": "ordinal"
+                                },
+                                "y": {
+                                    "field": "Density",
+
+                                    "type": "quantitative"
+                                },
+                                "tooltip": [{
+                                    "field": "country",
+
+                                    "type": "ordinal"
+
+                                },
+                                {
+                                    "field": "population",
+
+                                    "type": "quantitative"
+                                },
+                                {
+                                    "field": "area",
+
+                                    "type": "quantitative"
+                                },
+                                {
+                                    "field": "Density",
+
+                                    "type": "quantitative"
+                                }
+                                ],
+                                "color": { "value":"f0f","field": "Density", "type": "quantitative" },
+                                "color": {"value":"#0f0"}
+                            }
+                        };
+                        vegaEmbed('#vis2', yourVlSpec);
+                    </script>
+                    <h2 style="margin-left :300px;">The bar chart shows the World Density that was recorded in 2022
+                    </h2>
+                    <h3 style="margin-left :400px;">(how many people we have per meter^2 for each) </h3>
+                    <h3 style="margin-left :210px;">-As we can see,macau has the largest amount of Density with only 0.021 people per m^2 </h3>
+                    <h3 style="margin-left :210px;">-Following by Monaco with nearly 0.018</h3>
+                    <h3 style="margin-left :210px;">-China and India's data are very low in this list since they have massive amount of Area</h3>
+                </div>
+            </div>
+        </div>
+        <h2>3.China vs World Population through time</h2>
+        <div class="card" style="background-color:	#33FF99" ;">
+            <div class="card-body">
+                <div class="container" style="margin-left:350px">
+                    <div id="vis3" style="margin-top:30px"></div>
+
+                    <script type="text/javascript" ,style="text-align:center">
+                        var yourVlSpec = {
+                            "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+                            "title": "China population through time",
+                            "data": { "url": "https://raw.githubusercontent.com/nhaok3/fit3179assignment2/main/china_population.csv" },
+                            "width": 750,
+                            "height": 400,
+
+
+                            "layer": [
+                                {
+                                    "mark": "line",
+                                    "encoding": {
+                                        "x": { "field": "Year", "type": "temporal", "title": "Time" },
+                                        "y": { "field": "Population", "type": "quantitative", "title": "China population vs world population through Time" },
+                                        "color": { "datum": "China" }
+                                    }
+                                },
+                                {
+                                    "data": { "url": "https://raw.githubusercontent.com/nhaok3/fit3179assignment2/main/china_population.csv" },
+                                    "mark": { "type": "line", "strokeDash": [3, 1] },
+                                    "encoding": {
+                                        "x": { "field": "Year", "type": "temporal" },
+                                        "y": { "field": "World Population", "type": "quantitative" },
+                                        "color": { "datum": "World" }
+                                    }
+                                }
+                            ]
+
+
+                        }
+                            ;
+                        vegaEmbed('#vis3', yourVlSpec);
+                    </script>
+                    <h2 style="margin-left :50px;">The Line chart Show the population of China compared with the world through time 
+                    </h2>
+                    <h3 style="margin-left :10px;">-We know that china has always been the world's greatest population so let's talk about it in this graph</h3>
+                    <h3 style="margin-left :10px;">-As you can see that since 1960 ,china's data keep increasing slowly and slowly</h3>
+                    <h3 style="margin-left :10px;">-While the world population is increasing signficantly </h3>
+                    <h3 style="margin-left :10px;">-So China's population has not contributed as great as it was in 1960 to the world population</h3>
+                  
+                </div>
+            </div>
+        </div>
+        <h2>4.World Population But looking at the region side</h2>
+        <div class="card" style="background-color:#33FFFF" ;">
+            <div class="card-body">
+                <div class="container" style="margin-left:300px">
+                    <div id="vis4" style="margin-top:30px"></div>
+
+                    <script type="text/javascript" ,style="text-align:center">
+                        var yourVlSpec = {
+                            "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+                            "title": "World Population Region Density (Population /Area)",
+                            "width": 750,
+                            "height": 400,
+                            "data": { "url": "https://raw.githubusercontent.com/nhaok3/fit3179assignment2/main/countries.csv" },
+                            "mark": "point",
+                            "encoding": {
+                                "x": { "field": "region", "type": "ordinal" },
+                                "y": { "field": "population", "type": "quantitative" },
+                                "size": { "field": "area", "type": "quantitative" },
+                                "tooltip": [{
+                                    "field": "country",
+
+                                    "type": "ordinal"
+
+                                },
+                                {
+                                    "field": "area",
+
+                                    "type": "quantitative"
+                                },
+                                {
+                                    "field": "population",
+
+                                    "type": "quantitative"
+                                }
+                                ],
+                                "color": { "value": "#f00" }
+                            }
+                        }
+
+
+                            ;
+                        vegaEmbed('#vis4', yourVlSpec);
+                    </script>
+                    <h2 style="margin-left :50px;">The plot shows The population of the world vs area but we see on the region side
+                    </h2>
+                    
+                </div>
+            </div>
+        </div>
+        <h2>5.Concusion</h2>
+        <h3>-Through the datavisualizations,we know more about the which countries contributed the most and the least to world population</h3>
+        <h3>-Although China is still the world 's largest population but it is not as much percentage as before in the worldwide</h3>
+        <h3>-We know that there is a huge worldwide expansion in Population and we might have to move to different country in the future</h3>
+    </div>
+
+    </div>
+
+
+
+</body>
+
+</html>
